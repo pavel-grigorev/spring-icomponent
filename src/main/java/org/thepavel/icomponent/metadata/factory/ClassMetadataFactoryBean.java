@@ -23,13 +23,13 @@ import org.thepavel.icomponent.generic.GenericTypeParametersResolver;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.ClassMetadataImpl;
 
-import static org.springframework.util.ClassUtils.resolveClassName;
+import static org.thepavel.icomponent.util.AnnotationMetadataHelper.getSourceClass;
 
 @Component(ClassMetadataFactory.NAME)
 public class ClassMetadataFactoryBean implements ClassMetadataFactory {
   @Override
   public ClassMetadata getClassMetadata(AnnotationMetadata annotationMetadata) {
-    Class<?> annotatedClass = getClass(annotationMetadata);
+    Class<?> annotatedClass = getSourceClass(annotationMetadata);
     MergedAnnotations annotations = annotationMetadata.getAnnotations();
 
     ClassMetadataImpl classMetadata = new ClassMetadataImpl(annotatedClass, annotations);
@@ -39,10 +39,6 @@ public class ClassMetadataFactoryBean implements ClassMetadataFactory {
         .forEach(classMetadata::addMethodMetadata);
 
     return classMetadata;
-  }
-
-  private static Class<?> getClass(AnnotationMetadata annotationMetadata) {
-    return resolveClassName(annotationMetadata.getClassName(), null);
   }
 
   private static MethodMetadataFactory getMethodMetadataFactory(Class<?> clazz) {

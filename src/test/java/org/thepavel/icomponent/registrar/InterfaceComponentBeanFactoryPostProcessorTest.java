@@ -21,18 +21,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
-import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InterfaceComponentBeanFactoryPostProcessorTest {
   @Test
-  public void assignsFactoryMethodForInterfaces() {
+  public void setsBeanClassNameToFactoryBeanClassName() {
     givenBeanDefinitionFor(TestInterface.class);
     whenInterfaceComponentBeanFactoryPostProcessorRan();
-    thenBeanDefinitionHasFactoryBeanName(InterfaceComponentProxyFactory.NAME);
-    andBeanDefinitionHasFactoryMethodName(InterfaceComponentProxyFactory.METHOD_NAME);
+    thenBeanDefinitionHasBeanClassName(InterfaceComponentProxyFactoryBean.class.getName());
     andBeanDefinitionHasConstructorArguments(beanDefinition.getMetadata());
   }
 
@@ -40,8 +39,7 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
   public void ignoresAbstractClasses() {
     givenBeanDefinitionFor(TestAbstractClass.class);
     whenInterfaceComponentBeanFactoryPostProcessorRan();
-    thenBeanDefinitionHasFactoryBeanName(null);
-    andBeanDefinitionHasFactoryMethodName(null);
+    thenBeanDefinitionHasBeanClassName(TestAbstractClass.class.getName());
     andBeanDefinitionHasConstructorArguments();
   }
 
@@ -49,8 +47,7 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
   public void ignoresConcreteClasses() {
     givenBeanDefinitionFor(TestClass.class);
     whenInterfaceComponentBeanFactoryPostProcessorRan();
-    thenBeanDefinitionHasFactoryBeanName(null);
-    andBeanDefinitionHasFactoryMethodName(null);
+    thenBeanDefinitionHasBeanClassName(TestClass.class.getName());
     andBeanDefinitionHasConstructorArguments();
   }
 
@@ -70,12 +67,8 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
         .postProcessBeanFactory(new DummyConfigurableListableBeanFactory(beanDefinition));
   }
 
-  private void thenBeanDefinitionHasFactoryBeanName(String beanName) {
-    assertEquals(beanName, beanDefinition.getFactoryBeanName());
-  }
-
-  private void andBeanDefinitionHasFactoryMethodName(String methodName) {
-    assertEquals(methodName, beanDefinition.getFactoryMethodName());
+  private void thenBeanDefinitionHasBeanClassName(String expected) {
+    assertEquals(expected, beanDefinition.getBeanClassName());
   }
 
   private void andBeanDefinitionHasConstructorArguments(Object... arguments) {

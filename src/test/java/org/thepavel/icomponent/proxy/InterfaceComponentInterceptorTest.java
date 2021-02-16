@@ -25,9 +25,13 @@ import org.thepavel.icomponent.metadata.MethodMetadata;
 import org.thepavel.icomponent.metadata.factory.ClassMetadataFactoryBean;
 
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.util.ReflectionUtils.findMethod;
 
 @SuppressWarnings("SameParameterValue")
 public class InterfaceComponentInterceptorTest {
@@ -42,13 +46,24 @@ public class InterfaceComponentInterceptorTest {
     andMethodHandlerReceivedMethodMetadataFor(method);
   }
 
+  @Test
+  public void handlesToStringMethodInvocations() {
+    givenClass(TestInterface.class);
+    whenMethodCallIntercepted(findMethod(Object.class, "toString"));
+    thenMethodHandlerReceivedArguments(null);
+    andMethodHandlerReceivedMethodMetadataFor(null);
+    andInvocationResultIs(r -> r instanceof String && ((String) r).startsWith("java.lang.Object@"));
+  }
+
   private ClassMetadata classMetadata;
   private DummyMethodHandler methodHandler;
+  private Object invocationResult;
 
   @BeforeEach
   public void beforeEach() {
     classMetadata = null;
     methodHandler = new DummyMethodHandler();
+    invocationResult = null;
   }
 
   private void givenClass(Class<?> clazz) {
@@ -56,12 +71,14 @@ public class InterfaceComponentInterceptorTest {
     classMetadata = new ClassMetadataFactoryBean().getClassMetadata(annotationMetadata);
   }
 
-  private void whenMethodCallIntercepted(Method method, Object[] arguments) {
+  private void whenMethodCallIntercepted(Method method, Object... arguments) {
     MethodHandlerHashMap methodHandlerMap = new MethodHandlerHashMap();
     methodHandlerMap.put(method, methodHandler);
 
-    new InterfaceComponentInterceptor(classMetadata, methodHandlerMap)
-        .invoke(new DummyMethodInvocation(method, arguments));
+    InterfaceComponentInterceptor interceptor =
+        new InterfaceComponentInterceptor(classMetadata, methodHandlerMap);
+
+    invocationResult = interceptor.invoke(new DummyMethodInvocation(method, arguments));
   }
 
   private void thenMethodHandlerReceivedArguments(Object[] arguments) {
@@ -69,9 +86,18 @@ public class InterfaceComponentInterceptorTest {
   }
 
   private void andMethodHandlerReceivedMethodMetadataFor(Method method) {
+    if (method == null) {
+      assertNull(methodHandler.getPassedMethodMetadata());
+      return;
+    }
+
     MethodMetadata methodMetadata = classMetadata.getMethodMetadata(method);
 
     assertNotNull(methodMetadata);
     assertSame(methodMetadata, methodHandler.getPassedMethodMetadata());
+  }
+
+  private void andInvocationResultIs(Predicate<Object> tester) {
+    assertTrue(tester.test(invocationResult));
   }
 }

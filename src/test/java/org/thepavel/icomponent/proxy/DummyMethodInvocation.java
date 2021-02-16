@@ -17,17 +17,24 @@
 package org.thepavel.icomponent.proxy;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.aop.ProxyMethodInvocation;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
-class DummyMethodInvocation implements MethodInvocation {
+class DummyMethodInvocation implements ProxyMethodInvocation {
+  private final Object proxy = new Object();
   private final Method method;
   private final Object[] arguments;
 
   public DummyMethodInvocation(Method method, Object[] arguments) {
     this.method = method;
     this.arguments = arguments;
+  }
+
+  @Override
+  public Object getProxy() {
+    return proxy;
   }
 
   @Override
@@ -52,6 +59,29 @@ class DummyMethodInvocation implements MethodInvocation {
 
   @Override
   public AccessibleObject getStaticPart() {
+    return null;
+  }
+
+  @Override
+  public MethodInvocation invocableClone() {
+    return null;
+  }
+
+  @Override
+  public MethodInvocation invocableClone(Object... arguments) {
+    return null;
+  }
+
+  @Override
+  public void setArguments(Object... arguments) {
+  }
+
+  @Override
+  public void setUserAttribute(String key, Object value) {
+  }
+
+  @Override
+  public Object getUserAttribute(String key) {
     return null;
   }
 }

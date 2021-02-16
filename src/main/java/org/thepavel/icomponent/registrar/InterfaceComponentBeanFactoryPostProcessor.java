@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
-import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 import org.thepavel.icomponent.util.BeanDefinitionHelper;
 
 import java.util.Arrays;
@@ -42,11 +42,14 @@ public class InterfaceComponentBeanFactoryPostProcessor implements BeanFactoryPo
   }
 
   private void setFactoryBean(AnnotatedBeanDefinition beanDefinition) {
-    beanDefinition.setFactoryBeanName(InterfaceComponentProxyFactory.NAME);
-    beanDefinition.setFactoryMethodName(InterfaceComponentProxyFactory.METHOD_NAME);
+    beanDefinition.setBeanClassName(getFactoryBeanClassName());
 
     beanDefinition
         .getConstructorArgumentValues()
         .addGenericArgumentValue(beanDefinition.getMetadata());
+  }
+
+  protected String getFactoryBeanClassName() {
+    return InterfaceComponentProxyFactoryBean.class.getName();
   }
 }

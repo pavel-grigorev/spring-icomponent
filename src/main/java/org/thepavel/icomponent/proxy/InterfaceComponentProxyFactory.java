@@ -16,7 +16,7 @@
 
 package org.thepavel.icomponent.proxy;
 
-import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.AnnotationMetadata;
@@ -32,7 +32,6 @@ import java.util.List;
 public class InterfaceComponentProxyFactory {
   public static final String NAME =
       "org.thepavel.icomponent.proxy.internalInterfaceComponentProxyFactory";
-  public static final String METHOD_NAME = "createProxy";
 
   private final ClassMetadataFactory classMetadataFactory;
   private final List<ClassMetadataValidator> classMetadataValidators;
@@ -49,7 +48,6 @@ public class InterfaceComponentProxyFactory {
     this.interceptorFactory = interceptorFactory;
   }
 
-  @SuppressWarnings("unused")
   public Object createProxy(AnnotationMetadata annotationMetadata) {
     ClassMetadata classMetadata = getClassMetadata(annotationMetadata);
     validateClassMetadata(classMetadata);
@@ -71,10 +69,7 @@ public class InterfaceComponentProxyFactory {
   }
 
   private Object createProxy(ClassMetadata classMetadata) {
-    ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-    proxyFactoryBean.setInterfaces(classMetadata.getSourceClass());
-    proxyFactoryBean.addAdvice(getInterceptor(classMetadata));
-    return proxyFactoryBean.getObject();
+    return ProxyFactory.getProxy(classMetadata.getSourceClass(), getInterceptor(classMetadata));
   }
 
   private InterfaceComponentInterceptor getInterceptor(ClassMetadata classMetadata) {
