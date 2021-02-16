@@ -18,10 +18,12 @@ package org.thepavel.icomponent.proxy;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.util.ReflectionUtils;
 import org.thepavel.icomponent.handler.MethodHandler;
 import org.thepavel.icomponent.handler.MethodHandlerMap;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.MethodMetadata;
+import org.thepavel.icomponent.util.MethodInvocationHelper;
 
 import java.lang.reflect.Method;
 
@@ -45,6 +47,10 @@ public class InterfaceComponentInterceptor implements MethodInterceptor {
   @Override
   public Object invoke(MethodInvocation invocation) {
     Method method = invocation.getMethod();
+
+    if (ReflectionUtils.isToStringMethod(method)) {
+      return MethodInvocationHelper.getToStringValueFor(invocation);
+    }
 
     MethodMetadata methodMetadata = classMetadata.getMethodMetadata(method);
     MethodHandler methodHandler = methodHandlerMap.getMethodHandler(method);
