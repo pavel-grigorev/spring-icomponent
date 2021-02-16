@@ -16,7 +16,7 @@
 
 package org.thepavel.icomponent.proxy;
 
-import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.AnnotationMetadata;
@@ -71,10 +71,7 @@ public class InterfaceComponentProxyFactory {
   }
 
   private Object createProxy(ClassMetadata classMetadata) {
-    ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-    proxyFactoryBean.setInterfaces(classMetadata.getSourceClass());
-    proxyFactoryBean.addAdvice(getInterceptor(classMetadata));
-    return proxyFactoryBean.getObject();
+    return ProxyFactory.getProxy(classMetadata.getSourceClass(), getInterceptor(classMetadata));
   }
 
   private InterfaceComponentInterceptor getInterceptor(ClassMetadata classMetadata) {
