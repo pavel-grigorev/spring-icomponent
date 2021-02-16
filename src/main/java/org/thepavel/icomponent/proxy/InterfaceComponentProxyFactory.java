@@ -32,7 +32,6 @@ import java.util.List;
 public class InterfaceComponentProxyFactory {
   public static final String NAME =
       "org.thepavel.icomponent.proxy.internalInterfaceComponentProxyFactory";
-  public static final String METHOD_NAME = "createProxy";
 
   private final ClassMetadataFactory classMetadataFactory;
   private final List<ClassMetadataValidator> classMetadataValidators;
@@ -49,7 +48,6 @@ public class InterfaceComponentProxyFactory {
     this.interceptorFactory = interceptorFactory;
   }
 
-  @SuppressWarnings("unused")
   public Object createProxy(AnnotationMetadata annotationMetadata) {
     ClassMetadata classMetadata = getClassMetadata(annotationMetadata);
     validateClassMetadata(classMetadata);
