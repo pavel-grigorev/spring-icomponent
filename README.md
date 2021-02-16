@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.thepavel/icomponent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.thepavel/icomponent)
+
 # Interface-as-Component for Spring
 
 This library adds support for Spring's `@Component` annotation on interfaces:
@@ -34,7 +36,21 @@ public interface EmailService {
 
 # Adding to your project
 
-Coordinates in Maven central: *coming soon*
+Gradle:
+```
+dependencies {
+	implementation 'org.thepavel:icomponent:1.0.1'
+}
+```
+
+Maven:
+```
+<dependency>
+  <groupId>org.thepavel</groupId>
+  <artifactId>icomponent</artifactId>
+  <version>1.0.1</version>
+</dependency>
+```
 
 # Scanning packages
 
