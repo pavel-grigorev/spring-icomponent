@@ -34,6 +34,8 @@ public interface EmailService {
 }
 ```
 
+See the [demo project](https://github.com/pavel-grigorev/icomponent-demo) for the details on this example.
+
 # Adding to your project
 
 Gradle:
