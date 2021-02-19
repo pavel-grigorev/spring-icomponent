@@ -2,24 +2,7 @@
 
 # Interface-as-Component for Spring
 
-This library adds support for Spring's `@Component` annotation on interfaces:
-
-```java
-@Component
-public interface Dummy {
-  void dummy();
-}
-```
-
-For such an interface the framework builds a proxy object that routes method invocations to method handlers. The framework provides multiple options to map methods to method handlers (see below).
-
-# Why
-
-The general goal is to shift towards declarative approach in the code. The specific problem is to provide a platform for small project-scoped spring-data-like frameworks. This library is a solution to this problem.
-
-# Example
-
-With the help of this tool you can build things like:
+This library adds support for Spring's `@Component` annotation on interfaces making it possible to apply spring-data-like approach to all sorts of things. Here is an example of what you can build with this tool:
 
 ```java
 @Service
@@ -34,7 +17,13 @@ public interface EmailService {
 }
 ```
 
-See the [demo project](https://github.com/pavel-grigorev/icomponent-demo) for the details on this example.
+For such an interface the framework builds a proxy object that routes method invocations to method handlers. The framework provides multiple options to map methods to method handlers (see below).
+
+The source code for this example is [available on GitHub](https://github.com/pavel-grigorev/icomponent-demo).
+
+# Motivation
+
+The general goal is to shift towards declarative approach in the code. The specific problem is to provide a platform for small project-scoped spring-data-like frameworks. This library is a solution to this problem.
 
 # Adding to your project
 
