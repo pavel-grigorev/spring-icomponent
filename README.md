@@ -23,7 +23,7 @@ The source code for this example is [available on GitHub](https://github.com/pav
 
 # Motivation
 
-The general goal is to shift towards declarative approach in the code. The specific problem is to provide a platform for small project-scoped spring-data-like frameworks. This library is a solution to this problem.
+The general goal is to shift towards the declarative approach in the code. The specific problem is to provide a platform for small project-scoped Spring Data look-alike frameworks. This library is a solution to this problem.
 
 # Adding to your project
 
