@@ -20,9 +20,10 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
+import org.thepavel.icomponent.InterfaceComponentScan;
+import org.thepavel.icomponent.annotation.DefaultMarkerAnnotationResolver;
 import org.thepavel.icomponent.annotation.MarkerAnnotationResolver;
-import org.thepavel.icomponent.annotation.InterfaceComponentScanMarkerAnnotationResolver;
-import org.thepavel.icomponent.packageresolver.InterfaceComponentScanPackageResolver;
+import org.thepavel.icomponent.packageresolver.DefaultPackageResolver;
 import org.thepavel.icomponent.packageresolver.PackageResolver;
 
 import java.lang.annotation.Annotation;
@@ -30,24 +31,36 @@ import java.lang.annotation.Annotation;
 public class InterfaceComponentBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
   @Override
   public void registerBeanDefinitions(AnnotationMetadata configMetadata, BeanDefinitionRegistry registry) {
-    String[] packageNames = getPackageResolver().getPackageNames(configMetadata);
-    getScanner(configMetadata, registry).scan(packageNames);
+    String className = configMetadata.getClassName();
+    PackageResolver packageResolver = getPackageResolver();
+    MarkerAnnotationResolver markerAnnotationResolver = getMarkerAnnotationResolver();
+
+    configMetadata
+        .getAnnotations()
+        .stream(getAnnotationType())
+        .forEach(annotation -> {
+          String[] packageNames = packageResolver.getPackageNames(annotation, className);
+
+          Class<? extends Annotation> markerAnnotation = markerAnnotationResolver.getAnnotationType(annotation);
+          String beanNameAnnotationAttribute = markerAnnotationResolver.getBeanNameAnnotationAttribute(annotation);
+
+          getScanner(registry, markerAnnotation, beanNameAnnotationAttribute).scan(packageNames);
+        });
   }
 
   protected PackageResolver getPackageResolver() {
-    return new InterfaceComponentScanPackageResolver();
-  }
-
-  protected ClassPathBeanDefinitionScanner getScanner(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-    MarkerAnnotationResolver markerAnnotationResolver = getMarkerAnnotationResolver();
-
-    Class<? extends Annotation> annotationType = markerAnnotationResolver.getAnnotationType(metadata);
-    String beanNameAnnotationAttribute = markerAnnotationResolver.getBeanNameAnnotationAttribute(metadata);
-
-    return new InterfaceComponentBeanDefinitionScanner(registry, annotationType, beanNameAnnotationAttribute);
+    return new DefaultPackageResolver();
   }
 
   protected MarkerAnnotationResolver getMarkerAnnotationResolver() {
-    return new InterfaceComponentScanMarkerAnnotationResolver();
+    return new DefaultMarkerAnnotationResolver();
+  }
+
+  protected Class<? extends Annotation> getAnnotationType() {
+    return InterfaceComponentScan.class;
+  }
+
+  protected ClassPathBeanDefinitionScanner getScanner(BeanDefinitionRegistry registry, Class<? extends Annotation> markerAnnotation, String beanNameAnnotationAttribute) {
+    return new InterfaceComponentBeanDefinitionScanner(registry, markerAnnotation, beanNameAnnotationAttribute);
   }
 }

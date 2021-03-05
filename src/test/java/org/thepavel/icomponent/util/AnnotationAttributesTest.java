@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("SameParameterValue")
 public class AnnotationAttributesTest {
@@ -135,6 +136,12 @@ public class AnnotationAttributesTest {
     declaredOn(TestAnnotationWithValueAttributeOfTypeClassArray.class);
     whenGetValueAsClassesMethodCalled();
     thenResultIsOptionalContainingList(Boolean.class, Long.class);
+  }
+
+  @Test
+  public void throwsExceptionWhenDeclaredOnNotCalled() {
+    givenAnnotation(TestClassArrayValueAnnotation.class);
+    assertThrows(IllegalStateException.class, this::whenGetValueAsClassesMethodCalled);
   }
 
   private AnnotationAttributes<?> annotationAttributes;

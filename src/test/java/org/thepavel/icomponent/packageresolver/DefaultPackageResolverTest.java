@@ -20,15 +20,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.type.AnnotationMetadata;
 import org.thepavel.icomponent.InterfaceComponentScan;
 import org.thepavel.icomponent.integration.IntegrationTest;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class InterfaceComponentScanPackageResolverTest {
+public class DefaultPackageResolverTest {
   private static final String THIS_PACKAGE =
-      InterfaceComponentScanPackageResolverTest.class.getPackage().getName();
+      DefaultPackageResolverTest.class.getPackage().getName();
 
   @Test
   public void resolvesFromSingleValue() {
@@ -83,7 +84,7 @@ public class InterfaceComponentScanPackageResolverTest {
 
   @BeforeAll
   public static void beforeAll() {
-    packageResolver = new InterfaceComponentScanPackageResolver();
+    packageResolver = new DefaultPackageResolver();
   }
 
   @AfterAll
@@ -91,21 +92,27 @@ public class InterfaceComponentScanPackageResolverTest {
     packageResolver = null;
   }
 
-  private AnnotationMetadata annotationMetadata;
+  private String className;
+  private MergedAnnotation<?> annotation;
   private String[] resolvedPackages;
 
   @BeforeEach
   public void beforeEach() {
-    annotationMetadata = null;
+    className = null;
+    annotation = null;
     resolvedPackages = null;
   }
 
   private void givenClass(Class<?> clazz) {
-    annotationMetadata = AnnotationMetadata.introspect(clazz);
+    className = clazz.getName();
+    annotation = AnnotationMetadata
+        .introspect(clazz)
+        .getAnnotations()
+        .get(InterfaceComponentScan.class);
   }
 
   private void whenPackagesResolved() {
-    resolvedPackages = packageResolver.getPackageNames(annotationMetadata);
+    resolvedPackages = packageResolver.getPackageNames(annotation, className);
   }
 
   private void thenResolvedPackagesAre(String... expected) {
@@ -126,7 +133,7 @@ public class InterfaceComponentScanPackageResolverTest {
 
   @InterfaceComponentScan(basePackageClasses = {
       IntegrationTest.class,
-      InterfaceComponentScanPackageResolverTest.class
+      DefaultPackageResolverTest.class
   })
   private interface MultipleBasePackageClassesTest {
   }

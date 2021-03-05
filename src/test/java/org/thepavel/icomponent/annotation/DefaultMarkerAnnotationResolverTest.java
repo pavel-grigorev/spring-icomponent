@@ -20,6 +20,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.InterfaceComponentScan;
@@ -29,7 +30,7 @@ import java.lang.annotation.Annotation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class InterfaceComponentScanMarkerAnnotationResolverTest {
+public class DefaultMarkerAnnotationResolverTest {
   @Test
   public void resolvesAnnotationType() {
     givenClass(CustomMarkerAnnotationTest.class);
@@ -62,7 +63,7 @@ public class InterfaceComponentScanMarkerAnnotationResolverTest {
 
   @BeforeAll
   public static void beforeAll() {
-    resolver = new InterfaceComponentScanMarkerAnnotationResolver();
+    resolver = new DefaultMarkerAnnotationResolver();
   }
 
   @AfterAll
@@ -70,31 +71,34 @@ public class InterfaceComponentScanMarkerAnnotationResolverTest {
     resolver = null;
   }
 
-  private AnnotationMetadata annotationMetadata;
-  private Class<? extends Annotation> annotationType;
+  private MergedAnnotation<?> annotation;
+  private Class<? extends Annotation> markerAnnotationType;
   private String beanNameAnnotationAttribute;
 
   @BeforeEach
   public void beforeEach() {
-    annotationMetadata = null;
-    annotationType = null;
+    annotation = null;
+    markerAnnotationType = null;
     beanNameAnnotationAttribute = null;
   }
 
   private void givenClass(Class<?> clazz) {
-    annotationMetadata = AnnotationMetadata.introspect(clazz);
+    annotation = AnnotationMetadata
+        .introspect(clazz)
+        .getAnnotations()
+        .get(InterfaceComponentScan.class);
   }
 
   private void whenMarkerAnnotationTypeResolved() {
-    annotationType = resolver.getAnnotationType(annotationMetadata);
+    markerAnnotationType = resolver.getAnnotationType(annotation);
   }
 
   private void whenBeanNameAnnotationAttributeResolved() {
-    beanNameAnnotationAttribute = resolver.getBeanNameAnnotationAttribute(annotationMetadata);
+    beanNameAnnotationAttribute = resolver.getBeanNameAnnotationAttribute(annotation);
   }
 
   private void thenMarkerAnnotationTypeIs(Class<? extends Annotation> expected) {
-    assertSame(expected, annotationType);
+    assertSame(expected, markerAnnotationType);
   }
 
   private void thenBeanNameAnnotationAttributeIs(String expected) {

@@ -16,11 +16,11 @@
 
 package org.thepavel.icomponent.annotation;
 
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.annotation.MergedAnnotation;
 
 import java.lang.annotation.Annotation;
 
 public interface MarkerAnnotationResolver {
-  Class<? extends Annotation> getAnnotationType(AnnotationMetadata metadata);
-  String getBeanNameAnnotationAttribute(AnnotationMetadata metadata);
+  Class<? extends Annotation> getAnnotationType(MergedAnnotation<?> annotation);
+  String getBeanNameAnnotationAttribute(MergedAnnotation<?> annotation);
 }

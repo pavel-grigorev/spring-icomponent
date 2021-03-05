@@ -16,8 +16,8 @@
 
 package org.thepavel.icomponent.packageresolver;
 
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.annotation.MergedAnnotation;
 
 public interface PackageResolver {
-  String[] getPackageNames(AnnotationMetadata metadata);
+  String[] getPackageNames(MergedAnnotation<?> annotation, String className);
 }

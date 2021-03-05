@@ -16,15 +16,13 @@
 
 package org.thepavel.icomponent.annotation;
 
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.util.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
 
-public abstract class BaseMarkerAnnotationResolver implements MarkerAnnotationResolver {
-  protected abstract Class<? extends Annotation> getDeclaringAnnotationType();
-
+public class DefaultMarkerAnnotationResolver implements MarkerAnnotationResolver {
   protected String getAnnotationAttributeName() {
     return "annotation";
   }
@@ -43,22 +41,18 @@ public abstract class BaseMarkerAnnotationResolver implements MarkerAnnotationRe
 
   @Override
   @SuppressWarnings("unchecked")
-  public Class<? extends Annotation> getAnnotationType(AnnotationMetadata metadata) {
-    return (Class<? extends Annotation>) getAnnotationAttributes(metadata)
+  public Class<? extends Annotation> getAnnotationType(MergedAnnotation<?> annotation) {
+    return (Class<? extends Annotation>) AnnotationAttributes
+        .of(annotation)
         .getClass(getAnnotationAttributeName())
         .orElseGet(this::getDefaultAnnotationClass);
   }
 
   @Override
-  public String getBeanNameAnnotationAttribute(AnnotationMetadata metadata) {
-    return getAnnotationAttributes(metadata)
+  public String getBeanNameAnnotationAttribute(MergedAnnotation<?> annotation) {
+    return AnnotationAttributes
+        .of(annotation)
         .getString(getBeanNameAttributeName())
         .orElseGet(this::getDefaultBeanNameAnnotationAttribute);
-  }
-
-  private AnnotationAttributes<?> getAnnotationAttributes(AnnotationMetadata metadata) {
-    return AnnotationAttributes
-        .of(getDeclaringAnnotationType())
-        .declaredOn(metadata);
   }
 }

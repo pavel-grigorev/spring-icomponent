@@ -18,7 +18,6 @@ package org.thepavel.icomponent.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.MergedAnnotation;
-import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.lang.annotation.Annotation;
@@ -31,23 +30,38 @@ import static org.springframework.core.annotation.MergedAnnotation.VALUE;
 
 public class AnnotationAttributes<T extends Annotation> {
   private final Class<T> annotationType;
-  private MergedAnnotations annotations;
+  private MergedAnnotation<T> annotation;
 
   private AnnotationAttributes(Class<T> annotationType) {
     this.annotationType = annotationType;
+  }
+
+  private AnnotationAttributes(MergedAnnotation<T> annotation) {
+    this.annotationType = null;
+    this.annotation = annotation;
   }
 
   public static <T extends Annotation> AnnotationAttributes<T> of(Class<T> annotationType) {
     return new AnnotationAttributes<>(annotationType);
   }
 
+  public static <T extends Annotation> AnnotationAttributes<T> of(MergedAnnotation<T> annotation) {
+    return new AnnotationAttributes<>(annotation);
+  }
+
   public AnnotationAttributes<T> declaredOn(AnnotatedTypeMetadata metadata) {
-    annotations = metadata.getAnnotations();
+    if (annotationType == null) {
+      throw new IllegalStateException("Annotation type is undefined");
+    }
+    annotation = metadata.getAnnotations().get(annotationType);
     return this;
   }
 
   private MergedAnnotation<T> getAnnotation() {
-    return annotations.get(annotationType);
+    if (annotation == null) {
+      throw new IllegalStateException("Annotation is undefined");
+    }
+    return annotation;
   }
 
   public Optional<String> getString(String name) {

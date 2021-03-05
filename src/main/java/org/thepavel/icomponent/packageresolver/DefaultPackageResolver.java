@@ -16,21 +16,18 @@
 
 package org.thepavel.icomponent.packageresolver;
 
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.util.ClassUtils;
 import org.thepavel.icomponent.util.AnnotationAttributes;
 
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public abstract class BaseAnnotationPackageResolver implements PackageResolver {
+public class DefaultPackageResolver implements PackageResolver {
   private Set<String> result;
-
-  protected abstract Class<? extends Annotation> getAnnotationType();
 
   protected String getBasePackagesAttributeName() {
     return "basePackages";
@@ -41,29 +38,23 @@ public abstract class BaseAnnotationPackageResolver implements PackageResolver {
   }
 
   @Override
-  public String[] getPackageNames(AnnotationMetadata metadata) {
+  public String[] getPackageNames(MergedAnnotation<?> annotation, String className) {
     result = new LinkedHashSet<>();
 
-    collectFromAnnotation(metadata);
+    collectFromAnnotation(annotation);
 
     if (result.isEmpty()) {
-      collectFromClassName(metadata);
+      collectFromClassName(className);
     }
 
     return result.toArray(new String[0]);
   }
 
-  private void collectFromAnnotation(AnnotationMetadata metadata) {
-    AnnotationAttributes<?> attributes = getAnnotationAttributes(metadata);
+  private void collectFromAnnotation(MergedAnnotation<?> annotation) {
+    AnnotationAttributes<?> attributes = AnnotationAttributes.of(annotation);
 
     collectFromBasePackages(attributes);
     collectFromBasePackageClasses(attributes);
-  }
-
-  private AnnotationAttributes<?> getAnnotationAttributes(AnnotationMetadata metadata) {
-    return AnnotationAttributes
-        .of(getAnnotationType())
-        .declaredOn(metadata);
   }
 
   private void collectFromBasePackages(AnnotationAttributes<?> attributes) {
@@ -97,11 +88,7 @@ public abstract class BaseAnnotationPackageResolver implements PackageResolver {
         .forEach(result::add);
   }
 
-  private void collectFromClassName(AnnotationMetadata metadata) {
-    result.add(getPackageOfClass(metadata));
-  }
-
-  private static String getPackageOfClass(AnnotationMetadata metadata) {
-    return ClassUtils.getPackageName(metadata.getClassName());
+  private void collectFromClassName(String className) {
+    result.add(ClassUtils.getPackageName(className));
   }
 }
