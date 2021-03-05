@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.thepavel/icomponent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.thepavel/icomponent)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.thepavel/spring-icomponent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.thepavel/spring-icomponent)
 
 # Interface-as-Component for Spring
 
@@ -30,7 +30,7 @@ The general goal is to shift towards the declarative approach in the code. The s
 Gradle:
 ```
 dependencies {
-  implementation 'org.thepavel:icomponent:1.0.2'
+  implementation 'org.thepavel:spring-icomponent:1.0.2'
 }
 ```
 
@@ -38,7 +38,7 @@ Maven:
 ```
 <dependency>
   <groupId>org.thepavel</groupId>
-  <artifactId>icomponent</artifactId>
+  <artifactId>spring-icomponent</artifactId>
   <version>1.0.2</version>
 </dependency>
 ```
