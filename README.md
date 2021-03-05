@@ -30,7 +30,7 @@ The general goal is to shift towards the declarative approach in the code. The s
 Gradle:
 ```
 dependencies {
-	implementation 'org.thepavel:icomponent:1.0.1'
+  implementation 'org.thepavel:icomponent:1.0.2'
 }
 ```
 
@@ -39,7 +39,7 @@ Maven:
 <dependency>
   <groupId>org.thepavel</groupId>
   <artifactId>icomponent</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
