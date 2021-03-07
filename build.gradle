@@ -16,6 +16,7 @@
 
 plugins {
     id 'java-library'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'org.thepavel'
@@ -27,19 +28,24 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom ('io.spring.platform:platform-bom:2.0.8.RELEASE') {
+            bomProperty 'spring.version', '5.2.0.RELEASE'
+        }
+    }
+}
+
 dependencies {
-    api 'org.springframework:spring-context:5.2.0.RELEASE'
+    annotationProcessor 'org.springframework:spring-context-indexer'
+    api 'org.springframework:spring-context'
     implementation 'org.apache.commons:commons-lang3:3.11'
-    testImplementation 'org.springframework:spring-test:5.2.0.RELEASE'
+    testAnnotationProcessor 'org.springframework:spring-context-indexer'
+    testImplementation 'org.springframework:spring-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 test {
     useJUnitPlatform()
-}
-
-tasks.withType(JavaCompile).all {
-    options.compilerArgs.add("-Xlint:all")
-    options.compilerArgs.add("-Werror")
 }
