@@ -16,20 +16,16 @@
 
 package org.thepavel.icomponent.proxy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.handler.MethodHandlerMap;
 import org.thepavel.icomponent.handler.resolver.MethodHandlerMapResolver;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 
-@Component(InterfaceComponentInterceptorFactory.NAME)
 public class InterfaceComponentInterceptorFactory {
   public static final String NAME =
       "org.thepavel.icomponent.proxy.internalInterfaceComponentInterceptorFactory";
 
   private final MethodHandlerMapResolver methodHandlerMapResolver;
 
-  @Autowired
   public InterfaceComponentInterceptorFactory(MethodHandlerMapResolver methodHandlerMapResolver) {
     this.methodHandlerMapResolver = methodHandlerMapResolver;
   }

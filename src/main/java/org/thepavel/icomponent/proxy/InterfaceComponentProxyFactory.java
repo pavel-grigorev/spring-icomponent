@@ -18,9 +18,7 @@ package org.thepavel.icomponent.proxy;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeanInstantiationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.factory.ClassMetadataFactory;
 import org.thepavel.icomponent.metadata.validation.ClassMetadataValidationException;
@@ -28,7 +26,6 @@ import org.thepavel.icomponent.metadata.validation.ClassMetadataValidator;
 
 import java.util.List;
 
-@Component(InterfaceComponentProxyFactory.NAME)
 public class InterfaceComponentProxyFactory {
   public static final String NAME =
       "org.thepavel.icomponent.proxy.internalInterfaceComponentProxyFactory";
@@ -37,7 +34,6 @@ public class InterfaceComponentProxyFactory {
   private final List<ClassMetadataValidator> classMetadataValidators;
   private final InterfaceComponentInterceptorFactory interceptorFactory;
 
-  @Autowired
   public InterfaceComponentProxyFactory(
       ClassMetadataFactory classMetadataFactory,
       List<ClassMetadataValidator> classMetadataValidators,

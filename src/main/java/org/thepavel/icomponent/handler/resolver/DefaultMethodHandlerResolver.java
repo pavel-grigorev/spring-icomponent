@@ -16,25 +16,17 @@
 
 package org.thepavel.icomponent.handler.resolver;
 
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.thepavel.icomponent.DefaultMethodHandler;
 import org.thepavel.icomponent.handler.MethodHandler;
 import org.thepavel.icomponent.metadata.MethodMetadata;
 
-@Component(DefaultMethodHandlerResolver.NAME)
-@Order
 public class DefaultMethodHandlerResolver implements MethodHandlerResolver {
   public static final String NAME =
       "org.thepavel.icomponent.handler.resolver.internalDefaultMethodHandlerResolver";
 
   private final MethodHandler defaultMethodHandler;
 
-  @Autowired
-  public DefaultMethodHandlerResolver(@DefaultMethodHandler ObjectProvider<MethodHandler> defaultMethodHandler) {
-    this.defaultMethodHandler = defaultMethodHandler.getIfAvailable();
+  public DefaultMethodHandlerResolver(MethodHandler defaultMethodHandler) {
+    this.defaultMethodHandler = defaultMethodHandler;
   }
 
   @Override

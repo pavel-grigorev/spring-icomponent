@@ -17,8 +17,6 @@
 package org.thepavel.icomponent.handler.resolver;
 
 import org.springframework.beans.BeanInstantiationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.handler.MethodHandler;
 import org.thepavel.icomponent.handler.MethodHandlerMap;
 import org.thepavel.icomponent.metadata.ClassMetadata;
@@ -27,11 +25,9 @@ import org.thepavel.icomponent.metadata.MethodMetadata;
 import java.util.List;
 import java.util.Objects;
 
-@Component(MethodHandlerMapResolver.NAME)
 public class MethodHandlerMapResolverBean implements MethodHandlerMapResolver {
   private final List<MethodHandlerResolver> methodHandlerResolvers;
 
-  @Autowired
   public MethodHandlerMapResolverBean(List<MethodHandlerResolver> methodHandlerResolvers) {
     this.methodHandlerResolvers = methodHandlerResolvers;
   }

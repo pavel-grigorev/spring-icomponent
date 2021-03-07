@@ -18,14 +18,12 @@ package org.thepavel.icomponent.metadata.factory;
 
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.generic.GenericTypeParametersResolver;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.ClassMetadataImpl;
 
 import static org.thepavel.icomponent.util.AnnotationMetadataHelper.getSourceClass;
 
-@Component(ClassMetadataFactory.NAME)
 public class ClassMetadataFactoryBean implements ClassMetadataFactory {
   @Override
   public ClassMetadata getClassMetadata(AnnotationMetadata annotationMetadata) {

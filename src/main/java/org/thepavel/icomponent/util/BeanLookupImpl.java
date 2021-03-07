@@ -16,17 +16,13 @@
 
 package org.thepavel.icomponent.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@Component(BeanLookup.NAME)
 public class BeanLookupImpl implements BeanLookup {
   private final ApplicationContext context;
 
-  @Autowired
   public BeanLookupImpl(ApplicationContext context) {
     this.context = context;
   }

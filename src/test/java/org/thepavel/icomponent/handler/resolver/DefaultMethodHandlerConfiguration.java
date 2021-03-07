@@ -17,17 +17,14 @@
 package org.thepavel.icomponent.handler.resolver;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.thepavel.icomponent.DefaultMethodHandler;
+import org.thepavel.icomponent.InterfaceComponentConfiguration;
 import org.thepavel.icomponent.handler.MethodHandler;
-import org.thepavel.icomponent.util.BeanLookup;
 
 @Configuration
-@ComponentScan(basePackageClasses = {
-    MethodHandlerResolver.class,
-    BeanLookup.class
-})
+@Import(InterfaceComponentConfiguration.class)
 class DefaultMethodHandlerConfiguration {
   @Bean
   @DefaultMethodHandler

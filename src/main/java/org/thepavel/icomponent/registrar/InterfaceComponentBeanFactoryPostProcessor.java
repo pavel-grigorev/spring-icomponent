@@ -19,13 +19,11 @@ package org.thepavel.icomponent.registrar;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 import org.thepavel.icomponent.util.BeanDefinitionHelper;
 
 import java.util.Arrays;
 
-@Component(InterfaceComponentBeanFactoryPostProcessor.NAME)
 public class InterfaceComponentBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
   public static final String NAME =
       "org.thepavel.icomponent.registrar.internalInterfaceComponentBeanFactoryPostProcessor";

@@ -16,7 +16,6 @@
 
 package org.thepavel.icomponent.metadata.validation;
 
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.MethodMetadata;
 import org.thepavel.icomponent.util.MethodHelper;
@@ -24,7 +23,6 @@ import org.thepavel.icomponent.util.MethodHelper;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-@Component(ClassMetadataValidatorBean.NAME)
 public class ClassMetadataValidatorBean implements ClassMetadataValidator {
   public static final String NAME =
       "org.thepavel.icomponent.metadata.validation.internalClassMetadataValidatorBean";

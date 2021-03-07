@@ -16,19 +16,13 @@
 
 package org.thepavel.icomponent.handler.resolver;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.stereotype.Component;
 import org.thepavel.icomponent.Handler;
 import org.thepavel.icomponent.handler.MethodHandler;
 import org.thepavel.icomponent.metadata.MethodMetadata;
 import org.thepavel.icomponent.util.AnnotationAttributes;
 import org.thepavel.icomponent.util.BeanLookup;
 
-@Component(HandlerAnnotationMethodHandlerResolver.NAME)
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class HandlerAnnotationMethodHandlerResolver implements MethodHandlerResolver {
   public static final String NAME =
       "org.thepavel.icomponent.handler.resolver.internalHandlerAnnotationMethodHandlerResolver";
@@ -38,7 +32,6 @@ public class HandlerAnnotationMethodHandlerResolver implements MethodHandlerReso
 
   private final BeanLookup beanLookup;
 
-  @Autowired
   public HandlerAnnotationMethodHandlerResolver(BeanLookup beanLookup) {
     this.beanLookup = beanLookup;
   }
