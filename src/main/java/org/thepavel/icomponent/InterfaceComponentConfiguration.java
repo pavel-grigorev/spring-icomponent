@@ -81,7 +81,7 @@ public class InterfaceComponentConfiguration {
   }
 
   @Bean(InterfaceComponentBeanFactoryPostProcessor.NAME)
-  BeanFactoryPostProcessor interfaceComponentBeanFactoryPostProcessor() {
+  static BeanFactoryPostProcessor interfaceComponentBeanFactoryPostProcessor() {
     return new InterfaceComponentBeanFactoryPostProcessor();
   }
 
