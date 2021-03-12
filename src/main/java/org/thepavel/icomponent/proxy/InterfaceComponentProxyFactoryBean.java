@@ -16,31 +16,35 @@
 
 package org.thepavel.icomponent.proxy;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.AnnotationMetadata;
 
 import static org.thepavel.icomponent.util.AnnotationMetadataHelper.getSourceClass;
 
-public class InterfaceComponentProxyFactoryBean implements FactoryBean<Object> {
+public class InterfaceComponentProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
   private final AnnotationMetadata metadata;
   private final Class<?> objectType;
-
-  private InterfaceComponentProxyFactory proxyFactory;
+  private BeanFactory beanFactory;
 
   public InterfaceComponentProxyFactoryBean(AnnotationMetadata metadata) {
     this.metadata = metadata;
     objectType = getSourceClass(metadata);
   }
 
-  @Autowired
-  public void setProxyFactory(InterfaceComponentProxyFactory proxyFactory) {
-    this.proxyFactory = proxyFactory;
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) {
+    this.beanFactory = beanFactory;
   }
 
   @Override
   public Object getObject() {
-    return proxyFactory.createProxy(metadata);
+    return getProxyFactory().createProxy(metadata);
+  }
+
+  private InterfaceComponentProxyFactory getProxyFactory() {
+    return (InterfaceComponentProxyFactory) beanFactory.getBean(InterfaceComponentProxyFactory.NAME);
   }
 
   @Override

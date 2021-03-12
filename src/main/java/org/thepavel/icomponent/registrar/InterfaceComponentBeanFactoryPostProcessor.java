@@ -19,6 +19,7 @@ package org.thepavel.icomponent.registrar;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
 import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 import org.thepavel.icomponent.util.BeanDefinitionHelper;
 
@@ -45,9 +46,15 @@ public class InterfaceComponentBeanFactoryPostProcessor implements BeanFactoryPo
     beanDefinition
         .getConstructorArgumentValues()
         .addGenericArgumentValue(beanDefinition.getMetadata());
+
+    beanDefinition.setDependsOn(getFactoryBeanDependencies());
   }
 
   protected String getFactoryBeanClassName() {
     return InterfaceComponentProxyFactoryBean.class.getName();
+  }
+
+  protected String[] getFactoryBeanDependencies() {
+    return new String[] { InterfaceComponentProxyFactory.NAME };
   }
 }

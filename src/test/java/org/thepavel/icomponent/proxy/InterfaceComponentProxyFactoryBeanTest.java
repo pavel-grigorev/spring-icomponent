@@ -63,7 +63,7 @@ public class InterfaceComponentProxyFactoryBeanTest {
 
   private void whenProxyFactoryBeanCreated() {
     proxyFactoryBean = new InterfaceComponentProxyFactoryBean(annotationMetadata);
-    proxyFactoryBean.setProxyFactory(new DummyProxyFactory());
+    proxyFactoryBean.setBeanFactory(DummyBeanFactory.of(new DummyProxyFactory()));
   }
 
   private void thenProxyFactoryBeanHasObjectType(Class<?> expected) {

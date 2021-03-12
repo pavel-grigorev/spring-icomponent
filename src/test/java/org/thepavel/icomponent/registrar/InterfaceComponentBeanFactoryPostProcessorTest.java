@@ -21,10 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
 import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class InterfaceComponentBeanFactoryPostProcessorTest {
   @Test
@@ -33,6 +35,7 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
     whenInterfaceComponentBeanFactoryPostProcessorRan();
     thenBeanDefinitionHasBeanClassName(InterfaceComponentProxyFactoryBean.class.getName());
     andBeanDefinitionHasConstructorArguments(beanDefinition.getMetadata());
+    andBeanDefinitionHasDependsOn(InterfaceComponentProxyFactory.NAME);
   }
 
   @Test
@@ -41,6 +44,7 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
     whenInterfaceComponentBeanFactoryPostProcessorRan();
     thenBeanDefinitionHasBeanClassName(TestAbstractClass.class.getName());
     andBeanDefinitionHasConstructorArguments();
+    andBeanDefinitionHasDependsOn();
   }
 
   @Test
@@ -49,6 +53,7 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
     whenInterfaceComponentBeanFactoryPostProcessorRan();
     thenBeanDefinitionHasBeanClassName(TestClass.class.getName());
     andBeanDefinitionHasConstructorArguments();
+    andBeanDefinitionHasDependsOn();
   }
 
   private AnnotatedBeanDefinition beanDefinition;
@@ -73,6 +78,14 @@ public class InterfaceComponentBeanFactoryPostProcessorTest {
 
   private void andBeanDefinitionHasConstructorArguments(Object... arguments) {
     assertArrayEquals(arguments, getConstructorArguments());
+  }
+
+  private void andBeanDefinitionHasDependsOn(String... expected) {
+    if (expected.length == 0) {
+      assertNull(beanDefinition.getDependsOn());
+    } else {
+      assertArrayEquals(expected, beanDefinition.getDependsOn());
+    }
   }
 
   private Object[] getConstructorArguments() {
