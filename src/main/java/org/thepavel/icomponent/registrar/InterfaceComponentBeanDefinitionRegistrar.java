@@ -31,6 +31,8 @@ import java.lang.annotation.Annotation;
 public class InterfaceComponentBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
   @Override
   public void registerBeanDefinitions(AnnotationMetadata configMetadata, BeanDefinitionRegistry registry) {
+    registerConfiguration(registry);
+
     String className = configMetadata.getClassName();
     PackageResolver packageResolver = getPackageResolver();
     MarkerAnnotationResolver markerAnnotationResolver = getMarkerAnnotationResolver();
@@ -46,6 +48,10 @@ public class InterfaceComponentBeanDefinitionRegistrar implements ImportBeanDefi
 
           getScanner(registry, markerAnnotation, beanNameAnnotationAttribute).scan(packageNames);
         });
+  }
+
+  protected void registerConfiguration(BeanDefinitionRegistry registry) {
+    InterfaceComponentConfigurationRegistrar.registerConfiguration(registry);
   }
 
   protected PackageResolver getPackageResolver() {

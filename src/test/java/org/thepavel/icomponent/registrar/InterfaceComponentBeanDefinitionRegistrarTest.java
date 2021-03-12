@@ -31,6 +31,13 @@ public class InterfaceComponentBeanDefinitionRegistrarTest extends BaseBeanDefin
     andRegistryDoesNotContainBeanDefinitions(UNEXPECTED_BEANS);
   }
 
+  @Test
+  public void registersBeanDefinitionForConfiguration() {
+    givenConfigurationClass(InterfaceComponentBeanDefinitionRegistrarTest.class);
+    whenInterfaceComponentBeanDefinitionRegistrarRan();
+    thenRegistryContainsBeanDefinitions("interfaceComponentConfiguration");
+  }
+
   private AnnotationMetadata annotationMetadata;
 
   @BeforeEach
