@@ -29,6 +29,7 @@ public class InterfaceComponentBeanDefinitionRegistrarTest extends BaseBeanDefin
     whenInterfaceComponentBeanDefinitionRegistrarRan();
     thenRegistryContainsBeanDefinitions(EXPECTED_BEANS);
     andRegistryDoesNotContainBeanDefinitions(UNEXPECTED_BEANS);
+    andBeanDefinitionsAreProperlyConfigured(EXPECTED_BEANS);
   }
 
   private AnnotationMetadata annotationMetadata;

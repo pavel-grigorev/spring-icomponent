@@ -17,11 +17,14 @@
 package org.thepavel.icomponent.registrar;
 
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.thepavel.icomponent.beanname.CustomAnnotationBeanNameGenerator;
-import org.thepavel.icomponent.util.BeanDefinitionHelper;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 
 import java.lang.annotation.Annotation;
 
@@ -41,6 +44,26 @@ public class InterfaceComponentBeanDefinitionScanner extends ClassPathBeanDefini
 
   @Override
   protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-    return BeanDefinitionHelper.isInterface(beanDefinition);
+    AnnotationMetadata metadata = beanDefinition.getMetadata();
+    return metadata.isInterface() && !metadata.isAnnotation();
+  }
+
+  @Override
+  protected void postProcessBeanDefinition(AbstractBeanDefinition beanDefinition, String beanName) {
+    beanDefinition.setBeanClassName(getFactoryBeanClassName());
+
+    beanDefinition
+        .getConstructorArgumentValues()
+        .addGenericArgumentValue(((AnnotatedBeanDefinition) beanDefinition).getMetadata());
+
+    beanDefinition.setDependsOn(getFactoryBeanDependencies());
+  }
+
+  protected String getFactoryBeanClassName() {
+    return InterfaceComponentProxyFactoryBean.class.getName();
+  }
+
+  protected String[] getFactoryBeanDependencies() {
+    return new String[] { InterfaceComponentProxyFactory.NAME };
   }
 }

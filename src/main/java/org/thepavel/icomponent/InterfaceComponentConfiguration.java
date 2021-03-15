@@ -17,7 +17,6 @@
 package org.thepavel.icomponent;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +34,6 @@ import org.thepavel.icomponent.metadata.validation.ClassMetadataValidator;
 import org.thepavel.icomponent.metadata.validation.ClassMetadataValidatorBean;
 import org.thepavel.icomponent.proxy.InterfaceComponentInterceptorFactory;
 import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
-import org.thepavel.icomponent.registrar.InterfaceComponentBeanFactoryPostProcessor;
 import org.thepavel.icomponent.util.BeanLookup;
 import org.thepavel.icomponent.util.BeanLookupImpl;
 
@@ -78,11 +76,6 @@ public class InterfaceComponentConfiguration {
   @Bean(InterfaceComponentProxyFactory.NAME)
   InterfaceComponentProxyFactory interfaceComponentProxyFactory(ClassMetadataFactory classMetadataFactory, List<ClassMetadataValidator> classMetadataValidators, InterfaceComponentInterceptorFactory interceptorFactory) {
     return new InterfaceComponentProxyFactory(classMetadataFactory, classMetadataValidators, interceptorFactory);
-  }
-
-  @Bean(InterfaceComponentBeanFactoryPostProcessor.NAME)
-  static BeanFactoryPostProcessor interfaceComponentBeanFactoryPostProcessor() {
-    return new InterfaceComponentBeanFactoryPostProcessor();
   }
 
   @Bean(BeanLookup.NAME)

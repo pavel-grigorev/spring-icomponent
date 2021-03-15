@@ -17,13 +17,25 @@
 package org.thepavel.icomponent.registrar;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
+import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactoryBean;
 
 import java.util.Arrays;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
 abstract class BaseBeanDefinitionRegistryTest {
+  private static final String EXPECTED_BEAN_CLASS_NAME = InterfaceComponentProxyFactoryBean.class.getName();
+  private static final String[] EXPECTED_DEPENDENCIES = { InterfaceComponentProxyFactory.NAME };
+
   static final String[] EXPECTED_BEANS = {
       "testInterfaceComponent",
       "testInterfaceService"
@@ -63,5 +75,24 @@ abstract class BaseBeanDefinitionRegistryTest {
     if (contains) {
       fail(beanName + " expected not to be registered in BeanDefinitionRegistry but it is");
     }
+  }
+
+  void andBeanDefinitionsAreProperlyConfigured(String... names) {
+    Arrays
+        .stream(names)
+        .map(name -> registry.getBeanDefinition(name))
+        .map(d -> (AnnotatedBeanDefinition) d)
+        .forEach(this::testBeanDefinition);
+  }
+
+  private void testBeanDefinition(AnnotatedBeanDefinition beanDefinition) {
+    assertEquals(EXPECTED_BEAN_CLASS_NAME, beanDefinition.getBeanClassName());
+
+    List<ValueHolder> values = beanDefinition.getConstructorArgumentValues().getGenericArgumentValues();
+    assertNotNull(values);
+    assertEquals(1, values.size());
+    assertSame(beanDefinition.getMetadata(), values.get(0).getValue());
+
+    assertArrayEquals(EXPECTED_DEPENDENCIES, beanDefinition.getDependsOn());
   }
 }

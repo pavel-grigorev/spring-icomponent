@@ -36,6 +36,7 @@ public class InterfaceComponentBeanDefinitionScannerTest extends BaseBeanDefinit
     thenRegistryContainsBeanDefinitions(EXPECTED_BEANS);
     andRegistryDoesNotContainBeanDefinitions(UNEXPECTED_BEANS);
     andRegistryDoesNotContainBeanDefinitions(DUMMY_BEAN);
+    andBeanDefinitionsAreProperlyConfigured(EXPECTED_BEANS);
   }
 
   @Test
@@ -47,6 +48,7 @@ public class InterfaceComponentBeanDefinitionScannerTest extends BaseBeanDefinit
     thenRegistryContainsBeanDefinitions(DUMMY_BEAN);
     andRegistryDoesNotContainBeanDefinitions(EXPECTED_BEANS);
     andRegistryDoesNotContainBeanDefinitions(UNEXPECTED_BEANS);
+    andBeanDefinitionsAreProperlyConfigured(DUMMY_BEAN);
   }
 
   private String packageName;
