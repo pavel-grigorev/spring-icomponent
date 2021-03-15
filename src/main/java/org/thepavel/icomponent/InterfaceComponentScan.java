@@ -39,7 +39,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import(InterfaceComponentBeanDefinitionRegistrar.class)
+@Import({
+    InterfaceComponentConfiguration.class,
+    InterfaceComponentBeanDefinitionRegistrar.class
+})
 public @interface InterfaceComponentScan {
   /**
    * Alias for {@link #basePackages()}.
