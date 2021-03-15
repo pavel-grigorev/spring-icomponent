@@ -16,10 +16,18 @@
 
 package org.thepavel.icomponent.customannotation;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AliasFor;
+import org.thepavel.icomponent.InterfaceComponentScan;
 
-@Configuration
-@DummyComponentScan
-@MagicComponentScan
-class CustomAnnotationConfiguration {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@InterfaceComponentScan(annotation = Dummy.class)
+public @interface DummyComponentScan {
+  @AliasFor(annotation = InterfaceComponentScan.class)
+  String[] value() default {};
 }

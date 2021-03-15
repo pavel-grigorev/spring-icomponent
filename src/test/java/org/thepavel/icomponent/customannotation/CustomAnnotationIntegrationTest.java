@@ -36,6 +36,7 @@ public class CustomAnnotationIntegrationTest {
   public void testCustomAnnotation() {
     assertTrue(beanFactory.containsBean("testDefaultBeanName"));
     assertTrue(beanFactory.containsBean("magicBean"));
+    assertTrue(beanFactory.containsBean("testDummyComponent"));
     assertFalse(beanFactory.containsBean("testCustomBeanName"));
     assertFalse(beanFactory.containsBean("testComponent"));
   }

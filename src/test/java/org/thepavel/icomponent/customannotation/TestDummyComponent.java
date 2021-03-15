@@ -16,10 +16,6 @@
 
 package org.thepavel.icomponent.customannotation;
 
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@DummyComponentScan
-@MagicComponentScan
-class CustomAnnotationConfiguration {
+@Dummy
+public interface TestDummyComponent {
 }
