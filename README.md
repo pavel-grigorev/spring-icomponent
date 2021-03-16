@@ -1,12 +1,15 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.thepavel/spring-icomponent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.thepavel/spring-icomponent)
 
-# Interface-as-Component for Spring
+# spring-icomponent
 
-This library adds support for Spring's `@Component` annotation on interfaces making it possible to apply spring-data-like approach to all sorts of things. Here is an example of what you can build with this tool:
+This library adds support for the `@Component` annotation on interfaces. It creates a dynamic proxy implementation of an interface decorated with `@Component` (by default) or any other annotation that one would choose. The proxy object delegates method invocations to the user-defined method handlers. The library provides a couple of options to map method invocations to actual method handlers. A method handler is supplied with all the metadata of the method being called, which makes the method declaration itself be an extra parameter for the handler logic.
+
+Here is an example of what can be built using this tool:
 
 ```java
 @Service
 public interface EmailService {
+
   @Subject("email.subject.confirmation")
   @Template("confirmation")
   void sendConfirmation(@Param("username") String username, @Param("link") String link, @To String email);
@@ -17,13 +20,11 @@ public interface EmailService {
 }
 ```
 
-For such an interface the framework builds a proxy object that routes method invocations to method handlers. The framework provides multiple options to map methods to method handlers (see below).
-
-The source code for this example is [available on GitHub](https://github.com/pavel-grigorev/icomponent-demo).
+Follow [this page on GitHub](https://github.com/pavel-grigorev/spring-icomponent-demo) for this example's source code. Another example is a library [spring-resource-reader](https://github.com/pavel-grigorev/spring-resource-reader): a declarative resource reader with the resource content auto-conversion capabilities.
 
 # Motivation
 
-The general goal is to shift towards the declarative approach in the code. The specific problem is to provide a platform for small project-scoped Spring Data look-alike frameworks. This library is a solution to this problem.
+This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards declarative approach in the code. The  problem that `spring-icomponent` makes an effort to solve is to provide an easy-to-use base platform for small project-scoped and cross-project frameworks like the one in the example above.
 
 # Adding to your project
 
