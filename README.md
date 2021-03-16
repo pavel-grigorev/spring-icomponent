@@ -24,7 +24,7 @@ Follow [this page on GitHub](https://github.com/pavel-grigorev/spring-icomponent
 
 # Motivation
 
-This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards declarative approach in the code. The  problem that `spring-icomponent` makes an effort to solve is to provide an easy-to-use base platform for small project-scoped and cross-project frameworks like the one in the example above.
+This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards declarative approach in the code. The  problem that `spring-icomponent` attempts to solve is to provide an easy-to-use base platform for small project-scoped and cross-project frameworks like the one in the example above.
 
 # Adding to your project
 
