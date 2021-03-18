@@ -24,7 +24,7 @@ Follow [this page on GitHub](https://github.com/pavel-grigorev/spring-icomponent
 
 # Motivation
 
-This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards declarative approach in the code. The  problem that `spring-icomponent` attempts to solve is to provide an easy-to-use base platform for small project-scoped and cross-project frameworks like the one in the example above.
+This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards declarative approach in the code. The  problem that `spring-icomponent` attempts to solve is to provide an easy-to-use platform for small project-scoped and cross-project frameworks like the one in the example above.
 
 # Adding to your project
 
@@ -46,7 +46,7 @@ Maven:
 
 # Scanning packages
 
-To activate the framework add `@InterfaceComponentScan` to a configuration:
+To activate the framework add `@InterfaceComponentScan` to a java configuration:
 
 ```java
 @Configuration
@@ -60,7 +60,7 @@ Usage is similar to `@ComponentScan`. This configuration will scan from the pack
 
 # Building method handlers
 
-Method handler is a bean that implements `MethodHandler` interface:
+Method handler is a bean implementing the `MethodHandler` interface:
 
 ```java
 @Component
@@ -84,7 +84,7 @@ There are multiple options to do so:
 
 ## Declaring `@Handler` annotation on a method
 
-The following example demonstrates options to define method handler for specific method:
+The following example demonstrates the options to define a method handler for a method:
 
 ```java
 @Service
@@ -119,9 +119,7 @@ public interface ToStringService {
 
 ## Default method handler
 
-There is an option to build a default method handler. It would handle invocations of all methods that were not able to be linked with a method handler using other options.
-
-To declare a method handler as default add the `@DefaultMethodHandler` annotation.
+If present, a default method handler would handle invocations of all methods that do not have a handler defined by other options. To declare a method handler as default add the `@DefaultMethodHandler` annotation:
 
 ```java
 @Component
@@ -137,13 +135,13 @@ public class LoggingMethodHandler implements MethodHandler {
 }
 ```
 
-There can only be one default method handler in the application. Having multiple default method handlers leads to `NoUniqueBeanDefinitionException`.
+There can only be one default method handler in the application.
 
 ## Implementing `MehodHandlerResolver`
 
 Method handler resolvers is a more general way to map methods to actual method handlers. All options described above are implemented as method handler resolvers.
 
-Method handler resolver is a bean implementing `MehodHandlerResolver`. For given method metadata it should return a `MethodHandler` object or `null`.
+Method handler resolver is a bean implementing `MehodHandlerResolver`. For a given method metadata it should return a `MethodHandler` object or `null`.
 
 Multiple method handler resolvers may be defined in the application, each being responsible for a specific type of method handler.
 
@@ -177,7 +175,7 @@ public interface ToStringService {
 
 ## Method handler lookup sequence
 
-When proxies are being created for the interfaces the framework performs method handler lookup for every interface method. It does so by running all method handler resolvers one by one until it obtains a method handler. The first method handler obtained is going to be linked with the method. To control the order in which the resolvers run use the `@Order` annotation just like you normally do in Spring.
+When a proxy object is being created for an interface, the framework performs a method handler lookup for every method of the interface. It does so by running all method handler resolvers one by one until it obtains a method handler. The first method handler obtained is going to be linked with the method. To control the order in which the resolvers run use the `@Order` annotation just like you normally do in Spring.
 
 The complete method handler lookup sequence for a method is:
 
@@ -191,9 +189,9 @@ The complete method handler lookup sequence for a method is:
 
 An object of type `MethodMetadata` is passed to `MethodHandler` and `MethodHandlerResolver` providing useful information on a method being called or resolved.
 
-Method metadata includes information about annotations declared on the method itself, its parameters, return type and `throws` declarations. Annotation information comes in the form of Spring's `MergedAnnotations` class, which collects all declared annotations along with meta-annotations.
+Method metadata includes information about the annotations declared on the method itself, its parameters, return type and `throws` declarations. Annotation information comes in the form of Spring's `MergedAnnotations` object.
 
-The framework takes its best effort to resolve generic variables into concrete types in the method return type, parameter types and `throws` declarations. Method metadata includes information about the resolved types as well. There are situations when the actual type can not be resolved. In this case `getResolvedType()` returns `Object.class`.
+The framework makes an effort to resolve all generic variables into the concrete types in the method return type, parameter types and `throws` declarations. The information about the resolved types is included in the method metadata. There are situations when the actual type can not be resolved. In this case `getResolvedType()` returns `Object.class`.
 
 Given the class structure:
 
@@ -226,9 +224,9 @@ java.util.Map<java.lang.String,java.lang.Integer>
 java.util.List<java.lang.String>
 ```
 
-More specifically, `getResolvedType()` never returns `TypeVariable` but either `Class` or `ParameterizedType` or `GenericArrayType`. `ParameterizedType` and `GenericArrayType` in turn do not contain any `TypeVariable`.
+More specifically, `getResolvedType()` never returns an object of type `TypeVariable` but either `Class` or `ParameterizedType` or `GenericArrayType`. `ParameterizedType` and `GenericArrayType` in turn would not contain any `TypeVariable`.
 
-If a type is not parameterized, i.e. is a concrete class, `getResolvedType()` returns the class as is. Given the component:
+If a type is not parameterized, i.e. is a concrete class, `getResolvedType()` returns the class itself. Given the component:
 
 ```java
 @Component
@@ -255,7 +253,7 @@ java.lang.String
 
 # Customizing annotation
 
-If you would like to have a custom marker annotation for some type of service, this is how you usually build one with Spring:
+When you want to build a custom annotation to mark some type of service, you usually meta-annotate it like so:
 
 ```java
 @Retention(RUNTIME)
@@ -272,7 +270,7 @@ public interface MyService {
 }
 ```
 
-With this approach both `@Custom` and `@Component` options would be available for marking interfaces. If you want your annotation to be the only option, you can customize it in `@InterfaceComponentScan`:
+With this approach both `@Custom` and `@Component` would be available for marking interfaces. But if you want `@Custom` to be the only option, set the `annotation` attribute in `@InterfaceComponentScan`:
 
 ```java
 @Retention(RUNTIME)
@@ -286,7 +284,7 @@ public @interface Custom {
 public class AppConfig {
 }
 
-@Custom // recognized
+@Custom // picked up
 public interface MyService {
   void doWork();
 }
@@ -317,5 +315,39 @@ public class AppConfig {
 @Custom(beanName = "myServiceBean")
 public interface MyService {
   void doWork();
+}
+```
+
+Note that even though there can not be multiple direct declarations of `@InterfaceComponentScan`, multi-declaration is supported with the meta-annotations. For example:
+
+```java
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface Custom {
+  String value() default "";
+}
+
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface Dummy {
+  String value() default "";
+}
+
+@Retention(RUNTIME)
+@Target(TYPE)
+@InterfaceComponentScan(annotation = Custom.class)
+public @interface CustomScan {
+}
+
+@Retention(RUNTIME)
+@Target(TYPE)
+@InterfaceComponentScan(annotation = Dummy.class)
+public @interface DummyScan {
+}
+
+@Configuration
+@CustomScan
+@DummyScan
+public class AppConfig {
 }
 ```
