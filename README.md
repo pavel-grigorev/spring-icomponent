@@ -2,7 +2,7 @@
 
 # spring-icomponent
 
-This library adds support for the `@Component` annotation on interfaces. It creates a dynamic proxy implementation of an interface decorated with `@Component` (by default) or any other annotation that one would choose. The proxy object delegates method invocations to the user-defined method handlers. The library provides a couple of options to map method invocations to actual method handlers. A method handler is supplied with all metadata of the method being called, which makes the method declaration itself be an extra parameter for the handler logic.
+This library adds support for the `@Component` annotation on interfaces. It creates a dynamic proxy implementation of an interface decorated with `@Component` (by default) or any other annotation that you would choose. The proxy object delegates method invocations to the user-defined method handlers. All the information about the method being called is available to a handler and can be used to adjust its logic.
 
 Here is an example of what can be built using this tool:
 
@@ -26,7 +26,17 @@ An example of a library built on top of `spring-icomponent` is [spring-resource-
 
 # Motivation
 
-This library is inspired by Spring Data and also by [spring-cloud-openfeign](https://github.com/spring-cloud/spring-cloud-openfeign). The general goal is to shift further towards a declarative approach in the code. The  problem that `spring-icomponent` attempts to solve is to provide an easy-to-use platform for small project-scoped and cross-project frameworks like the one in the example above.
+This library is inspired by [Spring Data](https://spring.io/projects/spring-data). The key feature of Spring Data is repositories. Repositories offer a declarative, interface based programming model, meaning that a repository is fully defined by its interface and you don’t have to build an implementation class. The framework will create it. What each repository method is supposed to do will be determined from its declaration.
+
+This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client. This project is not a member of the Spring Data family, but provides the same interface based approach to building the client API methods.
+
+If I were to describe this design pattern, I would say that it is a facade interface in which method declarations define behavior of and parameter values for the underlying functionality.
+
+I as a developer would like to have the ability to implement this pattern in my projects without much effort. This would allow me to:
+- build a convenient interface based facade for any desired functionality,
+- use my project domain terms in the design of the interface.
+
+`spring-icomponent` provides an easy-to-use base platform for small project-scoped and cross-project frameworks that are to implement this pattern.
 
 # Adding to your project
 
@@ -46,6 +56,10 @@ Maven:
 </dependency>
 ```
 
+# Requirements
+
+Requires Spring `5.2.0+`.
+
 # Scanning packages
 
 To activate the framework add `@InterfaceComponentScan` to a java configuration:
@@ -59,6 +73,8 @@ public class AppConfiguration {
 ```
 
 Usage is similar to `@ComponentScan`. This configuration will scan from the package of `AppConfiguration`. You can also specify `basePackages` or `basePackageClasses` to define specific packages to scan.
+
+The framework will find all interfaces decorated with `@Component` (by default) or any other annotation that you would choose. It will then create the dynamic proxy implementations for all such interfaces.
 
 # Building method handlers
 
@@ -79,12 +95,12 @@ Method handler receives invocation arguments and metadata of the method being ca
 # Linking method handlers with methods
 
 There are multiple options to do so:
-- Declaring `@Handler` annotation on a method
-- Declaring `@Handler` annotation on a class
-- Implementing a default method handler
-- Implementing `MehodHandlerResolver`
+- Declare `@Handler` on a method
+- Declare `@Handler` on a class
+- Create a default `MehodHandler` bean
+- Create a `MehodHandlerResolver` bean
 
-## Declaring `@Handler` annotation on a method
+## Declare `@Handler` on a method
 
 The following example demonstrates the options to define a method handler for a method:
 
@@ -102,7 +118,7 @@ public interface ToStringService {
 }
 ```
 
-## Declaring `@Handler` annotation on a class
+## Declare `@Handler` on a class
 
 Method handler declared on a class will handle invocations of all methods of the class that do not have their own `@Handler` declaration. In the following example all methods except `join` trigger `toStringMethodHandler`. The `join` method triggers `commaJoiningMethodHandler`.
 
@@ -121,7 +137,7 @@ public interface ToStringService {
 
 ## Default method handler
 
-If present, a default method handler would handle invocations of all methods that do not have a handler defined by other options. To declare a method handler as default add the `@DefaultMethodHandler` annotation:
+If present, a default method handler would handle invocations of all methods that do not have a handler defined using other options. To make a method handler default, add the `@DefaultMethodHandler` annotation:
 
 ```java
 @Component
@@ -131,7 +147,7 @@ public class LoggingMethodHandler implements MethodHandler {
 
   @Override
   public Object handle(Object[] arguments, MethodMetadata methodMetadata) {
-    LOGGER.warn("There is no specific method handler for {}. Returning null...", methodMetadata.getSourceMethod());
+    LOGGER.warn("Method handler is not defined for method {}. Returning null...", methodMetadata.getSourceMethod());
     return null;
   }
 }
@@ -139,11 +155,11 @@ public class LoggingMethodHandler implements MethodHandler {
 
 There can only be one default method handler in the application.
 
-## Implementing `MehodHandlerResolver`
+## Create a `MehodHandlerResolver` bean
 
 Method handler resolvers is a more general way to map methods to actual method handlers. All options described above are implemented as method handler resolvers.
 
-Method handler resolver is a bean implementing `MehodHandlerResolver`. For a given method metadata it should return a `MethodHandler` object or `null`.
+Method handler resolver is a bean implementing the `MehodHandlerResolver` interface. For a given method metadata it should return a `MethodHandler` object or `null`.
 
 Multiple method handler resolvers may be defined in the application, each being responsible for a specific type of method handler.
 
@@ -151,7 +167,7 @@ Multiple method handler resolvers may be defined in the application, each being 
 @Component
 public class ToStringMethodHandlerResolver implements MethodHandlerResolver {
   @Autowired
-  private ToStringMethodHandler toStringMethodHandler;
+  ToStringMethodHandler toStringMethodHandler;
 
   @Override
   public MethodHandler getMethodHandler(MethodMetadata methodMetadata) {
@@ -181,19 +197,19 @@ When a proxy object is being created for an interface, the framework performs a 
 
 The complete method handler lookup sequence for a method is:
 
-1. If a method handler is defined by the `@Handler` annotation declared on the method then it is used. If the specified method handler does not exist then `NoSuchBeanDefinitionException` is thrown.
-1. If a method handler is defined by the `@Handler` annotation declared on a class then it is used. If the specified method handler does not exist then `NoSuchBeanDefinitionException` is thrown.
+1. If a method handler is defined by the `@Handler` annotation declared on the method itself then this handler is used. If the specified method handler does not exist then `NoSuchBeanDefinitionException` is thrown.
+1. If a method handler is defined by the `@Handler` annotation declared on a class then this handler is used. If the specified method handler does not exist then `NoSuchBeanDefinitionException` is thrown.
 1. User-defined method handler resolvers run in an optionally ordered sequence until one of them returns a method handler object or all of them return `null`. The first obtained method handler is used, if any.
 1. If the default method handler is present in the application then it is used.
 1. Otherwise `BeanInstantiationException` is thrown saying `"No method handler found for method ..."`.
 
 # Method metadata
 
-An object of type `MethodMetadata` is passed to `MethodHandler` and `MethodHandlerResolver` providing useful information on a method being called or resolved.
+An object of type `MethodMetadata` is passed to `MethodHandler`s and `MethodHandlerResolver`s providing useful information on a method being called or resolved.
 
-Method metadata includes information about the annotations declared on the method itself, its parameters, return type and `throws` declarations. Annotation information comes in the form of Spring's `MergedAnnotations` object.
+Method metadata includes information about the annotations declared on the method itself, its parameters, return type and exception list. Annotation information comes in the form of Spring's `MergedAnnotations` object.
 
-The framework makes an effort to resolve all generic variables into the concrete types in the method return type, parameter types and `throws` declarations. The information about the resolved types is included in the method metadata. There are situations when the actual type can not be resolved. In this case `getResolvedType()` returns `Object.class`.
+The framework makes an effort to resolve all generic variables into concrete types in the method return type, parameter types and exception list. Information about the resolved types is included in the method metadata. Sometimes the actual type can not be resolved. In such cases `getResolvedType()` returns `Object.class`.
 
 Given the class structure:
 
@@ -210,7 +226,7 @@ public interface Test extends Superinterface<String, Integer> {
 }
 ```
 
-Assuming that the method being handled is `apply`, the following code:
+Assuming that the method being handled is `Test#apply()`, the following code:
 
 ```java
 System.out.println(methodMetadata.getSourceMethod().getName());
@@ -226,7 +242,7 @@ java.util.Map<java.lang.String,java.lang.Integer>
 java.util.List<java.lang.String>
 ```
 
-More specifically, `getResolvedType()` never returns an object of type `TypeVariable` but either `Class` or `ParameterizedType` or `GenericArrayType`. `ParameterizedType` and `GenericArrayType` in turn would not contain any `TypeVariable`.
+More specifically, `getResolvedType()` will never return an object of type `TypeVariable` but either `Class` or `ParameterizedType` or `GenericArrayType`. `ParameterizedType` and `GenericArrayType` in turn will not contain any `TypeVariable`.
 
 If a type is not parameterized, i.e. is a concrete class, `getResolvedType()` returns the class itself. Given the component:
 
@@ -237,7 +253,7 @@ public interface Test {
 }
 ```
 
-Assuming that the method being handled is `getByName`, the following code:
+Assuming that the method being handled is `Test#getByName()`, the following code:
 
 ```java
 System.out.println(methodMetadata.getSourceMethod().getName());
@@ -255,7 +271,7 @@ java.lang.String
 
 # Customizing annotation
 
-When you want to build a custom annotation to mark some type of service, you usually meta-annotate it like so:
+When you want to build a custom annotation for marking a specific type of service, you usually meta-annotate it like so:
 
 ```java
 @Retention(RUNTIME)
@@ -320,7 +336,7 @@ public interface MyService {
 }
 ```
 
-Note that even though there can not be multiple direct declarations of `@InterfaceComponentScan`, multi-declaration is supported with the meta-annotations. For example:
+Note that even though there can not be multiple *direct* declarations of `@InterfaceComponentScan`, there still can be multiple *indirect* declarations of it (a.k.a. meta-annotations). For example:
 
 ```java
 @Retention(RUNTIME)
