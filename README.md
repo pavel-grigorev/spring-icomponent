@@ -34,7 +34,7 @@ If I were to describe this design pattern, I would say that it is a facade inter
 
 I as a developer would like to have the ability to implement this pattern in my projects without much effort. This would allow me to:
 - build a convenient interface based facade for any desired functionality,
-- use my project domain terms in the design of the interface.
+- use my project domain terms in the design of the facade interface.
 
 `spring-icomponent` provides an easy-to-use base platform for small project-scoped and cross-project frameworks that are to implement this pattern.
 
