@@ -56,7 +56,7 @@ Maven:
 </dependency>
 ```
 
-# Requirements
+# Prerequisites
 
 Requires Spring `5.2.0+`.
 
