@@ -22,7 +22,7 @@ public interface EmailService {
 
 Follow [this page on GitHub](https://github.com/pavel-grigorev/spring-icomponent-demo) for this example's source code.
 
-An example of a library built on top of `spring-icomponent` is [spring-resource-reader](https://github.com/pavel-grigorev/spring-resource-reader): a declarative resource reader with the resource content auto-conversion capabilities.
+An example of a library built on top of `spring-icomponent` is [spring-resource-reader](https://github.com/pavel-grigorev/spring-resource-reader): a declarative resource reader with the content auto-conversion capabilities.
 
 # Motivation
 
@@ -30,9 +30,9 @@ This library is inspired by [Spring Data](https://spring.io/projects/spring-data
 
 This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client. This project is not a member of the Spring Data family, but provides the same interface based approach to building the client API methods.
 
-If I were to describe this design pattern, I would say that it is a facade interface in which method declarations define behavior of and parameter values for the underlying functionality.
+I would describe this design pattern as a facade interface in which method declarations define behavior of and parameter values for the underlying functionality.
 
-I as a developer would like to have the ability to implement this pattern in my projects without much effort. This would allow me to:
+As a developer, I’d like to have the ability to implement this pattern in my projects without much effort. This would allow me to:
 - build a convenient interface based facade for any desired functionality,
 - use my project domain terms in the design of the facade interface.
 
