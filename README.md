@@ -28,7 +28,7 @@ An example of a library built on top of `spring-icomponent` is [spring-resource-
 
 This library is inspired by [Spring Data](https://spring.io/projects/spring-data). The key feature of Spring Data is repositories. Repositories offer a declarative, interface based programming model, meaning that a repository is fully defined by its interface and you don’t have to build an implementation class. The framework will create it. What each repository method is supposed to do will be determined from its declaration.
 
-This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client. This project is not a member of the Spring Data family, but provides the same interface based approach to building the client API methods.
+This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client. It is not a member of the Spring Data family, but provides the same interface based approach to building the client API methods.
 
 I would describe this design pattern as a facade interface in which method declarations define behavior of and parameter values for the underlying functionality.
 
@@ -159,7 +159,7 @@ There can only be one default method handler in the application.
 
 Method handler resolvers is a more general way to map methods to actual method handlers. All options described above are implemented as method handler resolvers.
 
-Method handler resolver is a bean implementing the `MehodHandlerResolver` interface. For a given method metadata it should return a `MethodHandler` object or `null`.
+Method handler resolver is a bean implementing the `MehodHandlerResolver` interface. For given method metadata it should return a `MethodHandler` object or `null`.
 
 Multiple method handler resolvers may be defined in the application, each being responsible for a specific type of method handler.
 
@@ -209,7 +209,7 @@ An object of type `MethodMetadata` is passed to `MethodHandler`s and `MethodHand
 
 Method metadata includes information about the annotations declared on the method itself, its parameters, return type and exception list. Annotation information comes in the form of Spring's `MergedAnnotations` object.
 
-The framework makes an effort to resolve all generic variables into concrete types in the method return type, parameter types and exception list. Information about the resolved types is included in the method metadata. Sometimes the actual type can not be resolved. In such cases `getResolvedType()` returns `Object.class`.
+The framework makes an effort to resolve all generic variables into concrete types in the method return type, parameter types and exception list. Information about the resolved types is included in method metadata. Sometimes the actual type can not be resolved. In such cases `getResolvedType()` returns `Object.class`.
 
 Given the class structure:
 
