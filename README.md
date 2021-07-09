@@ -2,7 +2,7 @@
 
 # spring-icomponent
 
-This library adds support for the `@Component` annotation on interfaces. It creates a dynamic proxy implementation of an interface decorated with `@Component` (by default) or any other annotation that you would choose. The proxy object delegates method invocations to the user-defined method handlers. All the information about the method being called is available to a handler and can be used to adjust its logic.
+This library adds support for the `@Component` annotation on interfaces. It creates dynamic proxy implementations for interfaces decorated with `@Component` (by default) or any other annotation you'd choose. The proxy implementations delegate method invocations to the user-defined method handlers.
 
 Here is an example of what can be built using this tool:
 
