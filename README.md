@@ -2,9 +2,9 @@
 
 # spring-icomponent
 
-This library adds support for the `@Component` annotation on interfaces. It creates dynamic proxy implementations for interfaces decorated with `@Component` (by default) or any other annotation you'd choose. The proxy implementations delegate method invocations to the user-defined method handlers.
+This library adds support for the `@Component` annotation on interfaces. It creates dynamic proxy implementations for the interfaces decorated with `@Component` (by default) or any other annotation you'd choose. The proxy implementations delegate method invocations to the user-defined method handlers.
 
-Here is an example of what can be built using this tool:
+The library is designed to be a simple in use base platform for the frameworks that would want to provide a declarative "interface only" API like they do in Spring Data. Here is an example of what can be built using this tool:
 
 ```java
 @Service
@@ -22,21 +22,19 @@ public interface EmailService {
 
 Follow [this page on GitHub](https://github.com/pavel-grigorev/spring-icomponent-demo) for this example's source code.
 
-An example of a library built on top of `spring-icomponent` is [spring-resource-reader](https://github.com/pavel-grigorev/spring-resource-reader): a declarative resource reader with the content auto-conversion capabilities.
+And [here](https://dzone.com/articles/spring-beans-with-auto-generated-implementations-how-to) is a tutorial.
+
+An example of a framework built on top of `spring-icomponent` is [spring-resource-reader](https://github.com/pavel-grigorev/spring-resource-reader): a declarative resource reader with the content auto-conversion capabilities.
 
 # Motivation
 
 This library is inspired by [Spring Data](https://spring.io/projects/spring-data). The key feature of Spring Data is repositories. Repositories offer a declarative, interface based programming model, meaning that a repository is fully defined by its interface and you don’t have to build an implementation class. The framework will create it. What each repository method is supposed to do will be determined from its declaration.
 
-This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client. It is not a member of the Spring Data family, but provides the same interface based approach to building the client API methods.
+This programming pattern could potentially be applied to a broad range of things. Take, for example, [spring-cloud-openfeign](https://spring.io/projects/spring-cloud-openfeign): a declarative REST client.
 
 I would describe this design pattern as a facade interface in which method declarations define behavior of and parameter values for the underlying functionality.
 
-As a developer, I’d like to have the ability to implement this pattern in my projects without much effort. This would allow me to:
-- build a convenient interface based facade for any desired functionality,
-- use my project domain terms in the design of the facade interface.
-
-`spring-icomponent` provides an easy-to-use base platform for small project-scoped and cross-project frameworks that are to implement this pattern.
+As a developer, I’d like to have the ability to implement this pattern in my projects without much effort. This would let me build tools that are convenient in use, easily extensible, and specific to my project's business domain.
 
 # Adding to your project
 
@@ -92,7 +90,7 @@ public class ToStringMethodHandler implements MethodHandler {
 
 Method handler receives invocation arguments and metadata of the method being called.
 
-# Linking method handlers with methods
+# Binding method handlers to methods
 
 There are multiple options to do so:
 - Declare `@Handler` on a method
@@ -137,7 +135,7 @@ public interface ToStringService {
 
 ## Default method handler
 
-If present, a default method handler would handle invocations of all methods that do not have a handler defined using other options. To make a method handler default, add the `@DefaultMethodHandler` annotation:
+When present, a default method handler will handle invocations of all methods that do not have a handler defined using other options. To make a method handler default, add the `@DefaultMethodHandler` annotation:
 
 ```java
 @Component
@@ -205,11 +203,11 @@ The complete method handler lookup sequence for a method is:
 
 # Method metadata
 
-An object of type `MethodMetadata` is passed to `MethodHandler`s and `MethodHandlerResolver`s providing useful information on a method being called or resolved.
+An object of type `MethodMetadata` is passed to `MethodHandler`s and `MethodHandlerResolver`s providing useful information about the method being called or resolved.
 
 Method metadata includes information about the annotations declared on the method itself, its parameters, return type and exception list. Annotation information comes in the form of Spring's `MergedAnnotations` object.
 
-The framework makes an effort to resolve all generic variables into concrete types in the method return type, parameter types and exception list. Information about the resolved types is included in method metadata. Sometimes the actual type can not be resolved. In such cases `getResolvedType()` returns `Object.class`.
+The framework makes an effort to resolve all generic variables into concrete types in the method return type, parameter types and exception list. Information about the resolved types is included in method metadata. Sometimes the actual type can not be resolved. In such case `getResolvedType()` returns `Object.class`.
 
 Given the class structure:
 
@@ -226,7 +224,7 @@ public interface Test extends Superinterface<String, Integer> {
 }
 ```
 
-Assuming that the method being handled is `Test#apply()`, the following code:
+Assuming that the method being handled is `Test#apply()`, the following code in the method handler:
 
 ```java
 System.out.println(methodMetadata.getSourceMethod().getName());
@@ -234,7 +232,7 @@ System.out.println(methodMetadata.getReturnTypeMetadata().getResolvedType());
 System.out.println(methodMetadata.getParametersMetadata().get(0).getResolvedType());
 ```
 
-Would print:
+will print:
 
 ```
 apply
@@ -244,16 +242,16 @@ java.util.List<java.lang.String>
 
 More specifically, `getResolvedType()` will never return an object of type `TypeVariable` but either `Class` or `ParameterizedType` or `GenericArrayType`. `ParameterizedType` and `GenericArrayType` in turn will not contain any `TypeVariable`.
 
-If a type is not parameterized, i.e. is a concrete class, `getResolvedType()` returns the class itself. Given the component:
+If a type is a concrete class, i.e. is not a type variable (eg. `T`) and not a parameterized type (eg. `List<T>`), `getResolvedType()` returns the class itself. Given the component:
 
 ```java
 @Component
 public interface Test {
-  List getByName(String name);
+  List getByName(String name); // List is not parameterized
 }
 ```
 
-Assuming that the method being handled is `Test#getByName()`, the following code:
+Assuming that the method being handled is `Test#getByName()`, the following code in the method handler:
 
 ```java
 System.out.println(methodMetadata.getSourceMethod().getName());
@@ -261,7 +259,7 @@ System.out.println(methodMetadata.getReturnTypeMetadata().getResolvedType());
 System.out.println(methodMetadata.getParametersMetadata().get(0).getResolvedType());
 ```
 
-Would print:
+will print:
 
 ```
 getByName
@@ -269,9 +267,9 @@ java.util.List
 java.lang.String
 ```
 
-# Customizing annotation
+# Customizing annotations
 
-When you want to build a custom annotation for marking a specific type of service, you usually meta-annotate it like so:
+When you want to build a custom annotation for marking a specific type of service, you usually meta-annotate it with `@Component` or `@Service` like so:
 
 ```java
 @Retention(RUNTIME)
@@ -288,7 +286,7 @@ public interface MyService {
 }
 ```
 
-With this approach both `@Custom` and `@Component` would be available for marking interfaces. But if you want `@Custom` to be the only option, set the `annotation` attribute in `@InterfaceComponentScan`:
+With this approach both `@Custom` and `@Component` will be available for marking interfaces. But if you want `@Custom` to be the only option, specify the `annotation` attribute in `@InterfaceComponentScan`:
 
 ```java
 @Retention(RUNTIME)
@@ -313,7 +311,7 @@ public interface TestService {
 }
 ```
 
-The annotation attribute name is also customizable:
+The annotation attribute name is also customizable (`value` is the default):
 
 ```java
 @Retention(RUNTIME)
