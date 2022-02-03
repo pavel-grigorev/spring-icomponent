@@ -36,7 +36,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
 @SuppressWarnings("SameParameterValue")
 public class InterfaceComponentInterceptorTest {
   @Test
-  public void delegatesToMethodHandler() {
+  public void delegatesToMethodHandler() throws Throwable {
     Method method = TestInterface.class.getMethods()[0];
     Object[] arguments = new Object[0];
 
@@ -47,7 +47,7 @@ public class InterfaceComponentInterceptorTest {
   }
 
   @Test
-  public void handlesToStringMethodInvocations() {
+  public void handlesToStringMethodInvocations() throws Throwable {
     givenClass(TestInterface.class);
     whenMethodCallIntercepted(findMethod(Object.class, "toString"));
     thenMethodHandlerReceivedArguments(null);
@@ -71,7 +71,7 @@ public class InterfaceComponentInterceptorTest {
     classMetadata = new ClassMetadataFactoryBean().getClassMetadata(annotationMetadata);
   }
 
-  private void whenMethodCallIntercepted(Method method, Object... arguments) {
+  private void whenMethodCallIntercepted(Method method, Object... arguments) throws Throwable {
     MethodHandlerHashMap methodHandlerMap = new MethodHandlerHashMap();
     methodHandlerMap.put(method, methodHandler);
 

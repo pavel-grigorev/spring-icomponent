@@ -33,6 +33,9 @@ public class IntegrationTest {
   private TestHandlerOnClass testHandlerOnClass;
 
   @Autowired
+  private TestHandlerOnClassWithDefaultMethod testHandlerOnClassWithDefaultMethod;
+
+  @Autowired
   private TestHandlerOnMethod testHandlerOnMethod;
 
   @Autowired
@@ -44,6 +47,11 @@ public class IntegrationTest {
   @Test
   public void testHandlerOnClass() {
     assertEquals(20, testHandlerOnClass.test(10));
+  }
+
+  @Test
+  public void TestHandlerOnClassWithDefaultMethod() {
+    assertEquals(30, testHandlerOnClassWithDefaultMethod.testDefault(10));
   }
 
   @Test
