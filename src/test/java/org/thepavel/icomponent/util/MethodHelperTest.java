@@ -32,7 +32,6 @@ public class MethodHelperTest {
     whenMethodTested("abstractMethod");
     thenMethodIsAbstract(true);
     andMethodIsStatic(false);
-    andMethodIsDefault(false);
   }
 
   @Test
@@ -41,29 +40,17 @@ public class MethodHelperTest {
     whenMethodTested("staticMethod");
     thenMethodIsAbstract(false);
     andMethodIsStatic(true);
-    andMethodIsDefault(false);
-  }
-
-  @Test
-  public void testDefaultMethod() {
-    givenClass(TestInterface.class);
-    whenMethodTested("defaultMethod");
-    thenMethodIsAbstract(false);
-    andMethodIsStatic(false);
-    andMethodIsDefault(true);
   }
 
   private Class<?> clazz;
   private Boolean isAbstract;
   private Boolean isStatic;
-  private Boolean isDefault;
 
   @BeforeEach
   public void beforeEach() {
     clazz = null;
     isAbstract = null;
     isStatic = null;
-    isDefault = null;
   }
 
   @SuppressWarnings("SameParameterValue")
@@ -77,7 +64,6 @@ public class MethodHelperTest {
 
     isAbstract = MethodHelper.isAbstract(method);
     isStatic = MethodHelper.isStatic(method);
-    isDefault = MethodHelper.isDefault(method);
   }
 
   private void thenMethodIsAbstract(Boolean expected) {
@@ -88,14 +74,9 @@ public class MethodHelperTest {
     assertEquals(expected, isStatic);
   }
 
-  private void andMethodIsDefault(Boolean expected) {
-    assertEquals(expected, isDefault);
-  }
-
   @SuppressWarnings("unused")
   private interface TestInterface {
     void abstractMethod();
     static void staticMethod() {}
-    default void defaultMethod() {}
   }
 }

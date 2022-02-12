@@ -30,8 +30,4 @@ public class MethodHelper {
   public static boolean isStatic(Method method) {
     return Modifier.isStatic(method.getModifiers());
   }
-
-  public static boolean isDefault(Method method) {
-    return !isAbstract(method) && !isStatic(method);
-  }
 }
