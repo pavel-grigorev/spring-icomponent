@@ -31,7 +31,6 @@ import org.thepavel.icomponent.handler.resolver.MethodHandlerResolver;
 import org.thepavel.icomponent.metadata.factory.ClassMetadataFactory;
 import org.thepavel.icomponent.metadata.factory.ClassMetadataFactoryBean;
 import org.thepavel.icomponent.metadata.validation.ClassMetadataValidator;
-import org.thepavel.icomponent.metadata.validation.ClassMetadataValidatorBean;
 import org.thepavel.icomponent.proxy.InterfaceComponentInterceptorFactory;
 import org.thepavel.icomponent.proxy.InterfaceComponentProxyFactory;
 import org.thepavel.icomponent.util.BeanLookup;
@@ -61,11 +60,6 @@ public class InterfaceComponentConfiguration {
   @Bean(ClassMetadataFactory.NAME)
   ClassMetadataFactory classMetadataFactoryBean() {
     return new ClassMetadataFactoryBean();
-  }
-
-  @Bean(ClassMetadataValidatorBean.NAME)
-  ClassMetadataValidator classMetadataValidatorBean() {
-    return new ClassMetadataValidatorBean();
   }
 
   @Bean(InterfaceComponentInterceptorFactory.NAME)
