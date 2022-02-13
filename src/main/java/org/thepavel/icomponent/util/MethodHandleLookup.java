@@ -25,9 +25,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * Strategies for {@link MethodHandle} lookup.
- *
  * Copied from <a href="https://github.com/spring-projects/spring-data-commons/blob/main/src/main/java/org/springframework/data/projection/DefaultMethodInvokingMethodInterceptor.java">DefaultMethodInvokingMethodInterceptor</a>.
+ *
+ * Strategies for {@link MethodHandle} lookup.
  *
  * @author Oliver Gierke
  * @author Jens Schauder
@@ -62,15 +62,6 @@ public enum MethodHandleLookup {
     boolean isAvailable() {
       return privateLookupIn != null;
     }
-
-    private MethodHandles.Lookup getLookup(Class<?> declaringClass, Method privateLookupIn) {
-      MethodHandles.Lookup lookup = MethodHandles.lookup();
-      try {
-        return (MethodHandles.Lookup) privateLookupIn.invoke(MethodHandles.class, declaringClass, lookup);
-      } catch (ReflectiveOperationException e) {
-        return lookup;
-      }
-    }
   },
 
   /**
@@ -100,7 +91,7 @@ public enum MethodHandleLookup {
      */
     @Override
     boolean isAvailable() {
-      return constructor.orElse(null) != null;
+      return constructor.get() != null;
     }
   },
 
@@ -140,6 +131,30 @@ public enum MethodHandleLookup {
     return lookup.findSpecial(declaringClass, method.getName(), methodType, declaringClass);
   }
 
+  private static MethodHandles.Lookup getLookup(Class<?> declaringClass, Method privateLookupIn) {
+    MethodHandles.Lookup lookup = MethodHandles.lookup();
+    try {
+      return (MethodHandles.Lookup) privateLookupIn.invoke(MethodHandles.class, declaringClass, lookup);
+    } catch (ReflectiveOperationException e) {
+      return lookup;
+    }
+  }
+
+  @Nullable
+  private static Constructor<MethodHandles.Lookup> getLookupConstructor() {
+    try {
+      Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class);
+      ReflectionUtils.makeAccessible(constructor);
+      return constructor;
+    } catch (Exception ex) {
+      // this is the signal that we are on Java 9 (encapsulated) and can't use the accessible constructor approach.
+      if (ex.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
+        return null;
+      }
+      throw new IllegalStateException(ex.getMessage(), ex);
+    }
+  }
+
   /**
    * Lookup a {@link MethodHandle} given {@link Method} to look up.
    *
@@ -167,20 +182,5 @@ public enum MethodHandleLookup {
       }
     }
     throw new IllegalStateException("No MethodHandleLookup available!");
-  }
-
-  @Nullable
-  private static Constructor<MethodHandles.Lookup> getLookupConstructor() {
-    try {
-      Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class);
-      ReflectionUtils.makeAccessible(constructor);
-      return constructor;
-    } catch (Exception ex) {
-      // this is the signal that we are on Java 9 (encapsulated) and can't use the accessible constructor approach.
-      if (ex.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
-        return null;
-      }
-      throw new IllegalStateException(ex);
-    }
   }
 }
