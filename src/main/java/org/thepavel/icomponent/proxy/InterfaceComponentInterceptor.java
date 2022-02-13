@@ -18,30 +18,25 @@ package org.thepavel.icomponent.proxy;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.ProxyMethodInvocation;
-import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
 import org.thepavel.icomponent.handler.MethodHandler;
 import org.thepavel.icomponent.handler.MethodHandlerMap;
 import org.thepavel.icomponent.metadata.ClassMetadata;
 import org.thepavel.icomponent.metadata.MethodMetadata;
-import org.thepavel.icomponent.util.MethodHandleLookup;
+import org.thepavel.icomponent.util.Lazy;
 import org.thepavel.icomponent.util.MethodInvocationHelper;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 public class InterfaceComponentInterceptor implements MethodInterceptor {
   private final ClassMetadata classMetadata;
   private final MethodHandlerMap methodHandlerMap;
-
-  private final MethodHandleLookup methodHandleLookup = MethodHandleLookup.getMethodHandleLookup();
-  private final Map<Method, MethodHandle> methodHandleCache = new ConcurrentReferenceHashMap<>(10, ConcurrentReferenceHashMap.ReferenceType.WEAK);
+  private final Lazy<DefaultMethodInterceptor> defaultMethodInterceptor;
 
   public InterfaceComponentInterceptor(ClassMetadata classMetadata, MethodHandlerMap methodHandlerMap) {
     this.classMetadata = classMetadata;
     this.methodHandlerMap = methodHandlerMap;
+    this.defaultMethodInterceptor = Lazy.of(DefaultMethodInterceptor::new);
   }
 
   ClassMetadata getClassMetadata() {
@@ -57,10 +52,7 @@ public class InterfaceComponentInterceptor implements MethodInterceptor {
     Method method = invocation.getMethod();
 
     if (method.isDefault()) {
-        Object[] arguments = invocation.getArguments();
-        Object proxy = ((ProxyMethodInvocation) invocation).getProxy();
-
-        return getMethodHandle(method).bindTo(proxy).invokeWithArguments(arguments);
+      return defaultMethodInterceptor.get().invoke(invocation);
     }
 
     if (ReflectionUtils.isToStringMethod(method)) {
@@ -71,16 +63,5 @@ public class InterfaceComponentInterceptor implements MethodInterceptor {
     MethodHandler methodHandler = methodHandlerMap.getMethodHandler(method);
 
     return methodHandler.handle(invocation.getArguments(), methodMetadata);
-  }
-
-  private MethodHandle getMethodHandle(Method method) throws Exception {
-    MethodHandle handle = methodHandleCache.get(method);
-
-    if (handle == null) {
-      handle = methodHandleLookup.lookup(method);
-      methodHandleCache.put(method, handle);
-    }
-
-    return handle;
   }
 }
